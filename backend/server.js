@@ -4,7 +4,6 @@ import express from "express";
 
 
 ///config
-
 dotenv.config({ path: "./backend/config/config.env" });
 
 //console.log(process.env.PORT);
