@@ -1,0 +1,31 @@
+{
+  "name": "dating-app",
+  "version": "1.0.0",
+  "description": "It is right guy for meetup.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
+    "dev" : "nodemon backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/divyam63/DATING-APP.git"
+  },
+  "keywords": [
+    "date",
+    "partner"
+  ],
+  "author": "divyam gupta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/divyam63/DATING-APP/issues"
+  },
+  "homepage": "https://github.com/divyam63/DATING-APP#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.12.1",
+    "nodemon": "^3.1.9"
+  }
+}
