@@ -1,20 +1,26 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import validator from "validator";
+
+
+
 
 // Define the user schema
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
-        unique: true,
+        required: [true, 'Please provide your name'],
         trim: true,
+        maxLength:[30,"not more than 30 char"],
+        minlength:[4,">=4 char in name"],
+        
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Please provide your email'],
         unique: true,
         lowercase: true,
-        trim: true,
+        validate: [validator.isEmail, 'Please provide a valid email']
     },
     password: {
         type: String,
