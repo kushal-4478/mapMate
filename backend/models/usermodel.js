@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
             },
             message: 'Passwords are not the same!'
         },
-        select: false
+        select: false     //jab include karo +password karo..
     },
     age: {
         type: Number,
