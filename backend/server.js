@@ -7,7 +7,7 @@ import express from "express";
 dotenv.config({ path: "./backend/config/config.env" });
 
 //console.log(process.env.PORT);
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 0;
 
 // Middleware
 app.use(express.json());
