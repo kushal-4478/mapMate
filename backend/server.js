@@ -1,7 +1,7 @@
 import app from "./app.js"
 import dotenv from "dotenv"
 import express from "express";
-
+import  {connectDB} from "../backend/database/mongoDB.js"
 
 ///config
 dotenv.config({ path: "./backend/config/config.env" });
@@ -21,3 +21,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+connectDB();
