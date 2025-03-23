@@ -2,6 +2,8 @@ import app from "./app.js"
 import dotenv from "dotenv"
 import express from "express";
 import  {connectDB} from "../backend/database/mongoDB.js"
+import cookieParser from "cookie-parser";
+import userRoute from "./routes/userRoute.js"
 
 ///config
 dotenv.config({ path: "./backend/config/config.env" });
@@ -11,8 +13,12 @@ const PORT = process.env.PORT || 0;
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
-// Routes
+//route // mouted every route is prefix with /api/users
+app.use("/api/users",userRoute);
+
+//default   Routes
 app.get('/', (req, res) => {
     res.send('Welcome to the Dating App Backend!');
 });
