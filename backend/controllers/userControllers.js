@@ -113,3 +113,53 @@ export const getUserProfileById = asyncHandler(async (req, res) => {
         throw new Error("User not found");
     }
 });
+
+//REFRESH TOKEN ENDPOINT
+
+
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        res.status(401);
+        throw new Error("Refresh token not found, please log in again");
+    }
+
+    try {
+        // Verify the refresh token
+        const decoded = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_SECRET || "refreshSecretKey"
+        );
+
+        // Find the user associated with the refresh token
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            res.status(401);
+            throw new Error("User not found, please log in again");
+        }
+
+        // Generate a new access token
+        const secretKey = process.env.JWT_SECRET || "hsghvsgsjash872337%^%^$Ehuw";
+        const accessTokenExpiresIn = "15m"; // Access token expires in 15 minutes
+
+        const newAccessToken = jwt.sign(
+            { id: user.id, email: user.email },
+            secretKey,
+            { expiresIn: accessTokenExpiresIn }
+        );
+
+        // Set the new access token in a cookie
+        res.cookie("accessToken", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 15 * 60 * 1000, // 15 minutes in milliseconds
+        });
+
+        res.status(200).json({ accessToken: newAccessToken });
+    } catch (error) {
+        res.status(401);
+        throw new Error("Invalid refresh token, please log in again");
+    }
+});
