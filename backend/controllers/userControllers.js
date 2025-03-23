@@ -1,7 +1,7 @@
 import asyncHandler from "../utils/asyncHandler";
 import User from "../models/usermodel.js";
 
-
+import generateToken from "../auth/jwtToken.js";
 
 
 
@@ -56,16 +56,30 @@ export const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
+
+        const token = generateToken(user,res);
         res.status(200).json({
             _id: user.id,
             username: user.username,
             email: user.email,
             age: user.age,
             gender: user.gender,
+            token,
         });
     } else {
         res.status(401);
         throw new Error("Invalid email or password");
+    }
+});
+
+//SIGN OUT USER ONLY IF IT IS LOGGED IN
+export const signOutUser = asyncHandler(async (req, res) => {
+    if (req.user) {
+        req.user = null; // Clear the user session or token
+        res.status(200).json({ message: "User signed out successfully" });
+    } else {
+        res.status(400);
+        throw new Error("No user is currently logged in");
     }
 });
 
