@@ -74,8 +74,13 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 //SIGN OUT USER ONLY IF IT IS LOGGED IN
 export const signOutUser = asyncHandler(async (req, res) => {
-    if (req.user) {
-        req.user = null; // Clear the user session or token
+    if (req.cookies.token) {
+        // Clear the token cookie
+        res.cookie("token", "", {
+            httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+            expires: new Date(0), // Set the cookie to expire immediately
+        });
+
         res.status(200).json({ message: "User signed out successfully" });
     } else {
         res.status(400);
