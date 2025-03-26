@@ -64,7 +64,8 @@ export const loginUser = asyncHandler(async (req, res) => {
             email: user.email,
             age: user.age,
             gender: user.gender,
-            token,
+            accessToken,
+            refreshToken,
         });
     } else {
         res.status(401);
@@ -74,11 +75,16 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 //SIGN OUT USER ONLY IF IT IS LOGGED IN
 export const signOutUser = asyncHandler(async (req, res) => {
-    if (req.cookies.token) {
-        // Clear the token cookie
-        res.cookie("token", "", {
-            httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-            expires: new Date(0), // Set the cookie to expire immediately
+    if (req.cookies.refreshToken || req.cookies.accessToken) {
+        // Clear both tokens
+        res.cookie("accessToken", "", {
+            httpOnly: true,
+            expires: new Date(0),
+        });
+
+        res.cookie("refreshToken", "", {
+            httpOnly: true,
+            expires: new Date(0),
         });
 
         res.status(200).json({ message: "User signed out successfully" });
@@ -115,8 +121,8 @@ export const getUserProfileById = asyncHandler(async (req, res) => {
 });
 
 //REFRESH TOKEN ENDPOINT
-
-
+// REFRESH TOKEN GENERATE THE ACCESS TOKEN
+//REFRESH THE ACCESS TOKEN
 export const refreshAccessToken = asyncHandler(async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
