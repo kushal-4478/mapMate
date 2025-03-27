@@ -2,8 +2,7 @@
 // This function generates a JWT token and stores it in a cookie.
 //The token in the cookie is automatically sent with each request to your server, allowing the server to validate your authentication status.
 
-
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken"
     // Generate the token  COMPONENT OF JWT => eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImVtYWlsIjoiam9obkBleGFtcGxlLmNvbSIsImlhdCI6MTYyNjY3MjAwMCwiZXhwIjoxNjI2Njc1NjAwfQ.abc123signature
     //header=> metadata of token
     //Payload ({ id: user.id, email: user.email })
