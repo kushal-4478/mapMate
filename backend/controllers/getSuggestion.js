@@ -1,8 +1,10 @@
 import axios from "axios";
 import asyncHandler from "../utils/asyncHandler.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 // GoMaps API Key (add this to your .env file)
-const GOMAPS_API_KEY = process.env.GOMAPS_API_KEY || "your_gomaps_api_key";
+const GOMAPS_API_KEY = process.env.GOMAPS_API_KEY || "AlzaSyE3D3KsBQ3rigY87df-KmliSzorSJ2YKyN";
 
 // Function to calculate the midpoint between two locations
 const calculateMidpoint = (location1, location2) => {
@@ -17,17 +19,14 @@ export const getSuggestions = asyncHandler(async (req, res) => {
 
     // Validate input
     if (!location1 || !location2 || !type) {
-        res.status(400);
-        throw new Error("Please provide both locations and a venue type");
+        return res.status(400).json({ message: "Please provide both locations and a venue type" });
     }
 
     // Calculate the midpoint between the two locations
     const midpoint = calculateMidpoint(location1, location2);
 
     // Construct the API URL
-    //const url = `https://api.gomaps.com/nearbysearch?location=${midpoint.lat},${midpoint.lng}&radius=${radius}&type=${type}&key=${GOMAPS_API_KEY}`;
-
-    const url=`https://maps.gomaps.pro/maps/api/place/nearbysearch/json?location=${midpoint.lat},${midpoint.lng}&radius=${radius}&type=${type}&language=en&key=${GOMAPS_API_KEY}`
+    const url = `https://maps.gomaps.pro/maps/api/place/nearbysearch/json?location=${midpoint.lat},${midpoint.lng}&radius=${radius}&type=${type}&language=en&key=${GOMAPS_API_KEY}`;
     console.log("Request URL:", url);
 
     try {
@@ -36,18 +35,21 @@ export const getSuggestions = asyncHandler(async (req, res) => {
         console.log("API Response:", response.data);
 
         // Check if the API response indicates success
-        if (!response.data.success) {
-            res.status(500);
-            throw new Error("Failed to fetch suggestions from GoMaps API");
+        if (response.data.status !== "OK") {
+            console.error("API Error Details:", response.data);
+            return res.status(500).json({
+                message: "Error fetching data from GoMaps API",
+                details: response.data,
+            });
         }
 
         // Filter and format the results
-        const suggestions = response.data.places.map((place) => ({
+        const suggestions = response.data.results.map((place) => ({
             name: place.name,
-            address: place.address,
+            address: place.vicinity,
             rating: place.rating || "No rating",
-            location: { lat: place.latitude, lng: place.longitude },
-            types: place.categories,
+            location: place.geometry.location,
+            types: place.types,
         }));
 
         // Send the response
@@ -58,7 +60,9 @@ export const getSuggestions = asyncHandler(async (req, res) => {
     } catch (error) {
         // Log and handle errors
         console.error("Error fetching suggestions:", error.message);
-        res.status(500);
-        throw new Error("Failed to fetch suggestions from GoMaps API");
+        res.status(500).json({
+            message: "Failed to fetch suggestions from GoMaps API",
+            error: error.message,
+        });
     }
 });
