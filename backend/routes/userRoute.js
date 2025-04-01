@@ -15,7 +15,7 @@ router.post("/signout", signOutUser);
 
 router.get("/refresh-token", refreshAccessToken);
 
-//// Location-based suggestions route
-router.post("/suggestions",getSuggestions);
+// Route to fetch location-based suggestions
+router.post("/suggestions", getSuggestions);
 
 export default router;

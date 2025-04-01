@@ -5,7 +5,7 @@ import  {connectDB} from "../backend/database/mongoDB.js"
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js"
 
-///config
+//config
 dotenv.config({ path: "./backend/config/config.env" });
 
 //console.log(process.env.PORT);
