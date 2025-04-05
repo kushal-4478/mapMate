@@ -2,8 +2,14 @@ import express from "express"
 import { registerUser,loginUser,signOutUser,refreshAccessToken } from "../controllers/userControllers.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { getSuggestions } from "../controllers/getSuggestion.js";
-import {createBooking, confirmBooking } from "../controllers/bookingController.js"
-import { createPayment } from "../controllers/paymentController.js";
+import {
+    createBooking,
+    createPayment,
+    getAllBookings,
+    getBookingById,
+} from "../controllers/bookingController.js";
+
+
 const router = express.Router();
 
 //routing
@@ -21,10 +27,10 @@ router.get("/refresh-token", refreshAccessToken);
 router.post("/suggestions", getSuggestions);
 
 //BOOKING 
-router.post('/book', createBooking);
-router.post('/confirm-booking', confirmBooking);
-
-//PAYMENT
-router.post('/create-payment', createPayment);
+// Booking routes
+router.post('/book', createBooking); // Create a new booking
+router.post('/create-payment', createPayment); // Create a payment for a booking
+router.get('/bookings', getAllBookings); // Get all bookings
+router.get('/bookings/:id', getBookingById); // Get a single booking by ID
 
 export default router;

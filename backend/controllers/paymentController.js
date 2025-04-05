@@ -1,22 +1,27 @@
-import Razorpay from 'razorpay';
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-});
-
+// Payment handler
 export const createPayment = async (req, res) => {
-    const { amount, bookingId } = req.body;
     try {
-        const options = {
-            amount: amount * 100, // amount in paise
-            currency: 'INR',
-            receipt: `receipt_${bookingId}`,
-            notes: { bookingId }
-        };
-        const order = await razorpay.orders.create(options);
-        res.status(200).json(order);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        const { amount, currency, paymentMethodId } = req.body;
+
+        // Create a payment intent
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency,
+            payment_method: paymentMethodId,
+            confirm: true,
+        });
+
+        res.status(200).json({
+            success: true,
+            paymentIntent,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 };
+

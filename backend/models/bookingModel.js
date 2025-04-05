@@ -4,8 +4,8 @@ const bookingSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   placeId: { type: String, required: true },
 
-  category: { type: String, required: true }, // e.g., "restaurant", "concert", "museum"
-  title: { type: String, required: true }, // name of the event/place
+  category: { type: String, required: false }, // e.g., "restaurant", "concert", "museum"
+  title: { type: String, required: false }, // name of the event/place
   address: { type: String, required: true },
 
   date: { type: String, required: true },
