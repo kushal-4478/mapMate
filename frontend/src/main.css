@@ -1,0 +1,57 @@
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  position: relative;
+  background-color: pink;
+  background-image: url("http://localhost:3000/images/love.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.header {
+  margin-bottom: 400px;
+   
+}
+
+.btn-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-login {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-contact {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  font-size: 14px;
+}
