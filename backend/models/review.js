@@ -1,0 +1,33 @@
+import mongoose from "mongoose";
+
+const reviewSchema = new mongoose.Schema({
+  reviewer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  reviewee: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  comment: {
+    type: String,
+    default: "",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+reviewSchema.index({ reviewer: 1, reviewee: 1 }, { unique: true });
+
+const Review = mongoose.model("Review", reviewSchema);
+export default Review;

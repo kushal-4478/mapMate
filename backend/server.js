@@ -8,6 +8,7 @@ import { connectDB } from "./database/mongoDB.js";
 import userRoute from "./routes/userRoute.js";
 import passport from "./config/passportConfig.js";
 import authRoutes from "./routes/authRoutes.js";
+import reviewRoute from './routes/reviewRoute.js';
 
 // Load environment variables
 dotenv.config({ path: "./backend/config/config.env" });
@@ -39,6 +40,7 @@ app.use(passport.session());
 
 // Routes
 app.use("/api/users", userRoute); // User routes
+app.use("/api/reviews", reviewRoute);
 app.use(authRoutes); // Auth routes
 
 // Default Route

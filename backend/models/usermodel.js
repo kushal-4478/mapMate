@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 
 
-
-
 // Define the user schema
 const userSchema = new mongoose.Schema({
     username: {
