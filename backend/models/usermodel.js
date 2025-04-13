@@ -59,11 +59,11 @@ const userSchema = new mongoose.Schema({
     avatar: {
         public_id:{
             type: String ,
-            required: true,
+            required: false,
         },
         url :{
             type:String,
-            required:true,
+            required:false,
         }
        
     },
@@ -81,10 +81,16 @@ userSchema.pre('save', async function (next) {
 });
 
 // Method to compare passwords
-userSchema.methods.comparePassword = async function (candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function (enteredPassword) {
+    //console.log("Entered Password:", enteredPassword); // Debugging log
+    //console.log("Hashed Password:", this.password); // Debugging log
+  
+    if (!enteredPassword || !this.password) {
+      throw new Error("Password and hash are required");
+    }
+  
+    return await bcrypt.compare(enteredPassword, this.password);
 };
-
 // Create the user model
 const User = mongoose.model('User', userSchema);
 

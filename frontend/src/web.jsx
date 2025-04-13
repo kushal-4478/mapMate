@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './main.css'; // Import CSS for styling
 
+
 const MainPage = () => {
   return (
     <div className="main-container">
@@ -16,6 +17,9 @@ const MainPage = () => {
         </Link>
         <Link to="/contact">
           <button className="btn btn-contact">Contact</button>
+        </Link>
+        <Link to="/dashboard">
+          <button className="btn btn-dashboard">Dashboard</button>
         </Link>
       </div>
 

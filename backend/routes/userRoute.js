@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 //routing
-router.post("/register", registerUser);
+router.post("/signup", registerUser);
 
 router.post("/login", loginUser);
 
@@ -24,7 +24,7 @@ router.post("/signout", signOutUser);
 router.get("/refresh-token", refreshAccessToken);
 
 // Route to fetch location-based suggestions
-router.post("/suggestions", getSuggestions);
+router.post("/getsuggestions", getSuggestions);
 
 //BOOKING 
 // Booking routes

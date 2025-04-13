@@ -1,14 +1,23 @@
-// import logo from 'node_modules/.logo192.svg';
-import './index.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MainPage from "./web";
+import Dashboard from "./components/Dashboard";
+import Login from "./login";
+import Contact from "./contact";
 
- const  App= () =>{
+
+const App = () => {
   return (
-       <div class="container">
-       <h1 id="love2">Welcome to our App</h1> 
-       <h2 id="love">Find the best palce for your Love</h2>
-       </div>
-
-   );
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<h1>404: Page Not Found</h1>} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
