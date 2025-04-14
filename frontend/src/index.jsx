@@ -7,6 +7,10 @@ import Login from './Login.jsx';
 import Signin from './Signin.jsx';
 import Contact from './contact.jsx';
 import Dashboard from './components/Dashboard'; // Import the Dashboard component
+import Booking from './booking/Booking.jsx';
+import Confirmation from './booking/Confirmation.jsx';
+import Payment from './booking/Payment.jsx';
+
 
 const App = () => {
   return (
@@ -17,6 +21,9 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<Dashboard />} /> {/* Add the Dashboard route */}
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/confirmation" element={<Confirmation />} />
       </Routes>
     </Router>
   );
