@@ -1,0 +1,43 @@
+
+/* Style for the success container */
+.success-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #4CAF50;
+    border-radius: 10px;
+    background-color: #f0fff0; /* Light green background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* Heading */
+.success-container h1 {
+    color: #4CAF50; /* Green color for success */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Paragraph text */
+.success-container p {
+    color: #555;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Button for navigation */
+.success-container button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.success-container button:hover {
+    background-color: #45a049;
+}

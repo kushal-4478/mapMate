@@ -4,7 +4,7 @@ import { protect } from "../middleware/authMiddleware.js";
 import { getSuggestions } from "../controllers/getSuggestion.js";
 import {
     createBooking,
-    createPayment,
+    //createPayment,
     getAllBookings,
     getBookingById,
 } from "../controllers/bookingController.js";
@@ -29,7 +29,7 @@ router.post("/getsuggestions", getSuggestions);
 //BOOKING 
 // Booking routes
 router.post('/book', createBooking); // Create a new booking
-router.post('/create-payment', createPayment); // Create a payment for a booking
+//router.post('/create-payment', createPayment); // Create a payment for a booking
 router.get('/bookings', getAllBookings); // Get all bookings
 router.get('/bookings/:id', getBookingById); // Get a single booking by ID
 

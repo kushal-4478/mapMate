@@ -9,7 +9,10 @@ import Contact from './contact.jsx';
 import Dashboard from './components/Dashboard'; // Import the Dashboard component
 import Booking from './booking/Booking.jsx';
 import Confirmation from './booking/Confirmation.jsx';
+//import Payment from './booking/Payment.jsx';
 import Payment from './booking/Payment.jsx';
+import PaymentSuccess from './booking/PaymentSuccess.jsx';
+import PaymentCancel from './booking/PaymentCancel.jsx';
 
 
 const App = () => {
@@ -24,6 +27,9 @@ const App = () => {
         <Route path="/booking" element={<Booking />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/confirmation" element={<Confirmation />} />
+        <Route path="/payment" element={<Payment amount={100} currency="usd" />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
       </Routes>
     </Router>
   );
