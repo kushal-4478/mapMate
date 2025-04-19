@@ -135,6 +135,27 @@ const SignUp = () => {
             Already have an account? <Link to="/login">Login</Link>
           </p>
         </form>
+        <div class="sign">
+               <h3>Continue with</h3>
+             </div>
+             // ...existing code...
+<div className="social-buttons">
+    <a href="http://localhost:3000/auth/google" className="social-btn google-btn">
+        <img 
+            src="/images/google.png"
+            alt="Google" 
+            className="social-icon"
+        />
+    </a>
+    <a href="http://localhost:3000/auth/facebook" className="social-btn facebook-btn">
+        <img 
+            src="/images/facebook.png"
+            alt="Facebook" 
+            className="social-icon"
+        />
+    </a>
+</div>
+  
       </div>
     </div>
   );

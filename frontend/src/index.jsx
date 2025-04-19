@@ -7,7 +7,7 @@ import Login from './Login.jsx';
 import Signin from './Signin.jsx';
 import Contact from './contact.jsx';
 import Dashboard from './components/Dashboard'; // Import the Dashboard component
-
+import LocationTracker from './components/LocationTracker.jsx';
 const App = () => {
   return (
     <Router>
@@ -17,6 +17,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/dashboard" element={<Dashboard />} /> {/* Add the Dashboard route */}
+        <Route path="/location" element={<LocationTracker/>}/>
       </Routes>
     </Router>
   );

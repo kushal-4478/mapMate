@@ -3,7 +3,7 @@ import { getSuggestions } from "../services/api";
 import SuggestionsList from "./SuggestionsList";
 import Map from "./Map";
 import "./Dashboard.css";
-impo
+
 const Dashboard = () => {
   const [location1, setLocation1] = useState("");
   const [location2, setLocation2] = useState("");
