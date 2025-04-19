@@ -1,7 +1,14 @@
 import React from "react";
 import "./suggestionsList.css";
+import { useNavigate } from "react-router-dom";
 
 const SuggestionsList = ({ suggestions }) => {
+  const navigate = useNavigate();
+
+  const handleSelect = (place) => {
+    navigate("/booking", { state: { place } }); // Pass the selected place to the booking page
+  };
+
   return (
     <div className="suggestions-container">
       {suggestions.length > 0 && (
@@ -18,6 +25,12 @@ const SuggestionsList = ({ suggestions }) => {
                 <p className="place-types">
                   <strong>Types:</strong> {place.types.join(", ")}
                 </p>
+                <button
+                  className="select-button"
+                  onClick={() => handleSelect(place)}
+                >
+                  Select
+                </button>
               </div>
             ))}
           </div>

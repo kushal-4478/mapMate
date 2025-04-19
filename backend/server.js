@@ -8,6 +8,7 @@ import { connectDB } from "./database/mongoDB.js";
 import userRoute from "./routes/userRoute.js";
 import passport from "./config/passportConfig.js";
 import authRoutes from "./routes/authRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // Load environment variables
 dotenv.config({ path: "./backend/config/config.env" });
@@ -40,11 +41,15 @@ app.use(passport.session());
 // Routes
 app.use("/api/users", userRoute); // User routes
 app.use(authRoutes); // Auth routes
+app.use("/api/payment", paymentRoutes); // Payment routes (updated path)
+
 
 // Default Route
 app.get('/', (req, res) => {
     res.send('Welcome to the Dating App Backend!');
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {

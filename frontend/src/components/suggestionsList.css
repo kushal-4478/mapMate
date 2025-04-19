@@ -46,3 +46,18 @@
     font-size: 0.9rem;
     color: #666;
   }
+
+  .book-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .book-button:hover {
+    background-color: #0056b3;
+  }
