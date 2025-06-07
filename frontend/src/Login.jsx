@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"; // Replace useHistory with
 
 const App = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState('');
   const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
   const handleChange = (e) => {
@@ -27,17 +28,31 @@ const handleSubmit = async (e) => {
 
     const data = await response.json();
 
-    if (response.ok) {
-      // Store JWT token in localStorage
-      localStorage.setItem("authToken", data.token);
-      alert("Login successful!");
-      navigate("/dashboard"); // Redirect to a protected page
-    } else {
-      alert(data.message || "Login failed");
+    if (!response.ok) {
+      // Show backend error message if available
+      throw new Error(data.message || "Login failed");
     }
+
+    // Check if response has the required data
+    if (!data.token) {
+      throw new Error("Login failed: Missing token");
+    }
+
+    // Store token and user data
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("userId", data._id); // Changed from data.user.id to data._id
+
+    // Show success message
+    setMessage("Login successful!");
+
+    // Navigate after a short delay to show the success message
+    setTimeout(() => {
+      navigate('/home');
+    }, 1500);
+
   } catch (error) {
-    console.error("Error logging in:", error);
-    alert("An error occurred. Please try again.");
+    setMessage(error.message || "Login failed");
+    console.error("Error logging in:", error.message);
   }
 };
 
@@ -79,6 +94,11 @@ const handleSubmit = async (e) => {
             Don't have an account? <Link to="/signin">Sign up</Link>
           </p>
         </form>
+        {message && (
+          <div className={`message ${message.includes('successful') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );

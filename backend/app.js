@@ -1,17 +1,27 @@
 import express from "express";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import userRoute from "./routes/userRoute.js";
+import cors from "cors";
+
 const app = express();
 
-// Middleware to parse JSON bodies
+// Middleware
 app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 
+// Mount routes - ensure userRoute is mounted before paymentRoutes
+app.use("/api/users", userRoute);
 app.use("/api/users", paymentRoutes);
 
-// Middleware for error
-// The error middleware should be used after all routes and other middleware
-//catch async error GLOBAL ERROR HANDLER
-//app.use(errorMiddleware);
-
-
+// Error handler
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
+});
 
 export default app;
