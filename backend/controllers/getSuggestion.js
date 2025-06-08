@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // GoMaps API Key (add this to your .env file)
-const GOMAPS_API_KEY = process.env.GOMAPS_API_KEY || "AlzaSyE3D3KsBQ3rigY87df-KmliSzorSJ2YKyN";
+const GOMAPS_API_KEY = process.env.GOMAPS_API_KEY || "AlzaSyIjIXw2Vb9ZcvEAsdJ8SG48r_RJZHP34qm";
 
 // Function to calculate the midpoint between two locations
 const calculateMidpoint = (location1, location2) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getSuggestions } from "../services/api";
+import axios from "axios";
 import SuggestionsList from "./SuggestionsList";
 import Map from "./Map";
 import "./Dashboard.css";
@@ -14,16 +14,29 @@ const Dashboard = () => {
 
   const handleSearch = async () => {
     try {
+      const token = localStorage.getItem('authToken');
       const requestData = {
         location1: { lat: parseFloat(location1.split(",")[0]), lng: parseFloat(location1.split(",")[1]) },
         location2: { lat: parseFloat(location2.split(",")[0]), lng: parseFloat(location2.split(",")[1]) },
         type,
-        radius,
+        radius
       };
 
-      const { midpoint, suggestions } = await getSuggestions(requestData);
-      setSuggestions(suggestions);
-      setMapCenter(midpoint);
+      const response = await axios.post(
+        'http://localhost:5000/api/users/getsuggestions',
+        requestData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data) {
+        setSuggestions(response.data.suggestions);
+        setMapCenter(response.data.midpoint);
+      }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }

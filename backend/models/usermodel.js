@@ -71,7 +71,101 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
+    personalDetails: {
+        occupation: {
+            type: String,
+            trim: true,
+            default: ''
+        },
+        education: {
+            type: String,
+            trim: true,
+            default: ''
+        },
+        age: {
+            type: Number,
+            min: [18, 'Age must be at least 18'],
+            max: [100, 'Age must be less than 100']
+        },
+        bio: {
+            type: String,
+            trim: true,
+            maxLength: [500, 'Bio cannot be more than 500 characters'],
+            default: ''
+        },
+        languages: [{
+            type: String,
+            trim: true
+        }]
+    },
+    location: {
+        city: {
+            type: String,
+            trim: true
+        },
+        state: {
+            type: String,
+            trim: true
+        },
+        country: {
+            type: String,
+            trim: true
+        },
+        coordinates: {
+            type: {
+                type: String,
+                default: 'Point'
+            },
+            coordinates: [Number]
+        }
+    },
+    preferences: {
+        ageRange: {
+            min: {
+                type: Number,
+                min: 18,
+                default: 18
+            },
+            max: {
+                type: Number,
+                max: 100,
+                default: 50
+            }
+        },
+        distance: {
+            type: Number,
+            default: 50 // in kilometers
+        },
+        interestedIn: {
+            type: String,
+            enum: ['Men', 'Women', 'Both'],
+            required: true
+        }
+    },
+    socialLinks: {
+        instagram: String,
+        facebook: String,
+        twitter: String,
+        linkedin: String
+    },
+    verificationStatus: {
+        isEmailVerified: {
+            type: Boolean,
+            default: false
+        },
+        isPhoneVerified: {
+            type: Boolean,
+            default: false
+        },
+        isProfileComplete: {
+            type: Boolean,
+            default: false
+        }
+    }
 });
+
+// Add index for geospatial queries
+userSchema.index({ "location.coordinates": "2dsphere" });
 
 // Hash the password before saving the user
 userSchema.pre('save', async function (next) {

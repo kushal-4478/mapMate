@@ -1,25 +1,24 @@
-import jwt from "jsonwebtoken";
-import asyncHandler from "../utils/asyncHandler.js";
-import User from "../models/usermodel.js";
+import jwt from 'jsonwebtoken';
 
-export const protect = asyncHandler(async (req, res, next) => {
-    const token = req.cookies.accessToken;
+export const protect = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
 
     if (!token) {
-        res.status(401);
-        throw new Error("Not authorized, no token");
+      return res.status(401).json({ message: 'Authentication required' });
     }
 
-    try {
-        // Verify the access token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "yourAccessTokenSecret");
-
-        // Attach the user to the request
-        req.user = await User.findById(decoded.id).select("-password");
-
-        next();
-    } catch (error) {
-        res.status(401);
-        throw new Error("Not authorized, token failed");
-    }
-});
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(401).json({ message: 'Invalid or expired token' });
+  }
+};

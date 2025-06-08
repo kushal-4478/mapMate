@@ -1,30 +1,43 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
 const Home = () => {
-  useEffect(() => {
-    console.log('Home component mounted');
-  }, []);
-
   return (
     <div className="home-container">
-      <h1 className="home-title">Welcome to Dating App</h1>
+      <h1>Welcome to Perfect Meeting Point</h1>
+      <p className="subtitle">Connect. Meet. Share Moments.</p>
       
       <div className="features-grid">
         <div className="feature-card">
-          <h2>Find Matches</h2>
-          <p>Discover potential matches based on your preferences</p>
-          <Link to="/dashboard" className="feature-button">
-            Go to Dashboard
+          <h2>Find Connections</h2>
+          <p>Meet friends, partners, or business connections</p>
+          <Link to="/explore" className="feature-button">
+            Explore People
           </Link>
         </div>
 
         <div className="feature-card">
-          <h2>Book Venue</h2>
-          <p>Find and book the perfect venue for your date</p>
-          <Link to="/booking" className="feature-button">
-            Book Now
+          <h2>Group Meetups</h2>
+          <p>Create or join group activities and events</p>
+          <Link to="/groups" className="feature-button">
+            Discover Groups
+          </Link>
+        </div>
+
+        <div className="feature-card">
+          <h2>Perfect Venues</h2>
+          <p>Find and book ideal meeting locations</p>
+          <Link to="/venues" className="feature-button">
+            Find Venues
+          </Link>
+        </div>
+
+        <div className="feature-card">
+          <h2>Family Events</h2>
+          <p>Plan family gatherings and celebrations</p>
+          <Link to="/events" className="feature-button">
+            Plan Event
           </Link>
         </div>
       </div>

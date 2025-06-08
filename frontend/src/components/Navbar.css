@@ -2,28 +2,84 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.6rem 5%;
   background: #4f8cff;
-  padding: 16px 32px;
-  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 60px; /* Fixed height */
 }
 
 .nav-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.nav-links a, .nav-btn {
-  margin-left: 20px;
-  color: #fff;
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-left: auto;
+}
+
+.nav-links a {
+  color: white;
   text-decoration: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
   font-weight: 500;
-  background: none;
-  border: none;
-  cursor: pointer;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
-.nav-btn:hover, .nav-links a:hover {
-  text-decoration: underline;
+.nav-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-button {
+  background: white;
+  color: #4f8cff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.profile-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.6rem 3%;
+    height: 50px;
+  }
+
+  .nav-links {
+    gap: 0.8rem;
+  }
+
+  .nav-logo {
+    font-size: 1.1rem;
+  }
+}
+
+/* Make navbar scrollable on very small screens */
+@media (max-width: 600px) {
+  .navbar {
+    overflow-x: auto;
+  }
+
+  .nav-links {
+    padding-right: 0.8rem;
+  }
 }

@@ -13,6 +13,7 @@ import Confirmation from './booking/Confirmation';
 import PaymentSuccess from './booking/PaymentSuccess';
 import PaymentCancel from './booking/PaymentCancel';
 import PrivateRoute from './components/PrivateRoute';
+import Profile from './components/Profile';
 
 const App = () => {
   return (
@@ -52,6 +53,14 @@ const App = () => {
         <Route path="/confirmation" element={<Confirmation />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-cancel" element={<PaymentCancel />} />
+        <Route 
+          path="/profile" 
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          } 
+        />
         <Route path="*" element={<h1>404: Page Not Found</h1>} />
       </Routes>
     </Router>

@@ -1,28 +1,30 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./Navbar.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import ProfileIcon from './ProfileIcon';
+import './Navbar.css';
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem("token");
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  const isAuthenticated = !!localStorage.getItem('authToken');
 
   return (
     <nav className="navbar">
-      <Link to="/" className="nav-logo">DatingApp</Link>
+      <Link to="/" className="nav-logo">
+        Perfect Meeting Point
+      </Link>
+      
       <div className="nav-links">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/contact">Contact</Link>
         {isAuthenticated ? (
-          <button className="nav-btn" onClick={handleLogout}>Logout</button>
+          <>
+            <Link to="/home">Home</Link>
+            <Link to="/explore">Explore</Link>
+            <Link to="/connections">Connections</Link>
+            <Link to="/venues">Find Venues</Link>
+            <ProfileIcon />
+          </>
         ) : (
           <>
             <Link to="/login">Login</Link>
-            <Link to="/signin">Sign Up</Link>
+            <Link to="/signin">Join Now</Link>
           </>
         )}
       </div>

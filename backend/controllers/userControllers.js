@@ -48,139 +48,206 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 //LOGIN USER
 
-
 // Controller to handle user login
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Check if email and password are provided
   if (!email || !password) {
     res.status(400);
     throw new Error("Email and password are required");
   }
 
-  // Find the user by email
-  const user = await User.findOne({ email }).select("+password"); // Include password in the query
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  // Check if the password matches
-  const isMatch = await user.comparePassword(password); // Assuming comparePassword is defined in your User model
+  const isMatch = await user.comparePassword(password);
 
   if (!isMatch) {
     res.status(401);
     throw new Error("Invalid credentials");
   }
 
-  // Generate a JWT token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  // Changed token payload to use userId instead of id
+  const token = jwt.sign(
+    { 
+      userId: user._id,  // Changed from id to userId
+      email: user.email 
+    }, 
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
   res.status(200).json({
     _id: user._id,
     username: user.username,
     email: user.email,
-    token,
+    token
   });
 });
 
 //SIGN OUT USER ONLY IF IT IS LOGGED IN
 export const signOutUser = asyncHandler(async (req, res) => {
-    if (req.cookies.refreshToken || req.cookies.accessToken) {
-        // Clear both tokens
-        res.cookie("accessToken", "", {
-            httpOnly: true,
-            expires: new Date(0),
-        });
+  if (req.cookies.refreshToken || req.cookies.accessToken) {
+    // Clear both tokens
+    res.cookie("accessToken", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    });
 
-        res.cookie("refreshToken", "", {
-            httpOnly: true,
-            expires: new Date(0),
-        });
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    });
 
-        res.status(200).json({ message: "User signed out successfully" });
-    } else {
-        res.status(400);
-        throw new Error("No user is currently logged in");
-    }
+    res.status(200).json({ message: "User signed out successfully" });
+  } else {
+    res.status(400);
+    throw new Error("No user is currently logged in");
+  }
 });
 
 //GET USER PROFILE WITH ID BY ADMIN ONLY
 export const getUserProfileById = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    if (!req.user || !req.user.isAdmin) {
-        res.status(403);
-        throw new Error("Access denied. Admins only.");
-    }
+  if (!req.user || !req.user.isAdmin) {
+    res.status(403);
+    throw new Error("Access denied. Admins only.");
+  }
 
-    const user = await User.findById(id).select("-password");
-    // EXAMPLE USER OBJECT
-    // {  
-    //     _id: "123",
-    //     name: "John Doe",
-    //     email: "john@example.com",
-    //     password: "hashedpassword123"
-    // }
+  const user = await User.findById(id).select("-password");
+  // EXAMPLE USER OBJECT
+  // {  
+  //     _id: "123",
+  //     name: "John Doe",
+  //     email: "john@example.com",
+  //     password: "hashedpassword123"
+  // }
 
-    if (user) {
-        res.status(200).json(user);
-    } else {
-        res.status(404);
-        throw new Error("User not found");
-    }
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
 });
 
 //REFRESH TOKEN ENDPOINT
 // REFRESH TOKEN GENERATE THE ACCESS TOKEN
 //REFRESH THE ACCESS TOKEN
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refreshToken;
 
-    if (!refreshToken) {
-        res.status(401);
-        throw new Error("Refresh token not found, please log in again");
+  if (!refreshToken) {
+    res.status(401);
+    throw new Error("Refresh token not found, please log in again");
+  }
+
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET || "refreshSecretKey"
+    );
+
+    // Find the user associated with the refresh token
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      res.status(401);
+      throw new Error("User not found, please log in again");
     }
 
+    // Generate a new access token
+    const secretKey = process.env.JWT_SECRET || "hsghvsgsjash872337%^%^$Ehuw";
+    const accessTokenExpiresIn = "15m"; // Access token expires in 15 minutes
+
+    const newAccessToken = jwt.sign(
+      { id: user.id, email: user.email },
+      secretKey,
+      { expiresIn: accessTokenExpiresIn }
+    );
+
+    // Set the new access token in a cookie
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 15 * 60 * 1000, // 15 minutes in milliseconds
+    });
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    res.status(401);
+    throw new Error("Invalid refresh token, please log in again");
+  }
+});
+
+//GET PROFILE
+export const getProfile = asyncHandler(async (req, res) => {
+  try {
+    console.log('Profile request received');
+    console.log('User from token:', req.user);
+
+    // Get userId from token payload
+    const userId = req.user.userId || req.user.id; // Handle both formats
+    
+    if (!userId) {
+      console.log('No userId found in token');
+      return res.status(401).json({ message: 'User ID not found in token' });
+    }
+
+    const user = await User.findById(userId)
+      .select('-password -refreshToken');
+
+    if (!user) {
+      console.log('User not found in database');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log('User found:', user);
+    res.json({
+      username: user.username,
+      email: user.email,
+      phone: user.phone || '',
+      location: user.location || '',
+      bio: user.bio || ''
+    });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ message: 'Error fetching profile data' });
+  }
+});
+
+export const updatePersonalDetails = async (req, res) => {
     try {
-        // Verify the refresh token
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.JWT_REFRESH_SECRET || "refreshSecretKey"
-        );
+        const userId = req.user.userId;
+        const { occupation, education, age, languages, bio } = req.body;
 
-        // Find the user associated with the refresh token
-        const user = await User.findById(decoded.id);
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    'personalDetails.occupation': occupation,
+                    'personalDetails.education': education,
+                    'personalDetails.age': age,
+                    'personalDetails.languages': languages,
+                    'personalDetails.bio': bio
+                }
+            },
+            { new: true, runValidators: true }
+        ).select('-password');
 
-        if (!user) {
-            res.status(401);
-            throw new Error("User not found, please log in again");
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        // Generate a new access token
-        const secretKey = process.env.JWT_SECRET || "hsghvsgsjash872337%^%^$Ehuw";
-        const accessTokenExpiresIn = "15m"; // Access token expires in 15 minutes
-
-        const newAccessToken = jwt.sign(
-            { id: user.id, email: user.email },
-            secretKey,
-            { expiresIn: accessTokenExpiresIn }
-        );
-
-        // Set the new access token in a cookie
-        res.cookie("accessToken", newAccessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 15 * 60 * 1000, // 15 minutes in milliseconds
-        });
-
-        res.status(200).json({ accessToken: newAccessToken });
+        res.json(updatedUser);
     } catch (error) {
-        res.status(401);
-        throw new Error("Invalid refresh token, please log in again");
+        console.error('Update personal details error:', error);
+        res.status(500).json({ message: 'Error updating personal details' });
     }
-});
+};
