@@ -17,8 +17,8 @@ const Navbar = () => {
           <>
             <Link to="/home">Home</Link>
             <Link to="/explore">Explore</Link>
-            <Link to="/connections">Connections</Link>
-            <Link to="/venues">Find Venues</Link>
+            <Link to="/find-venue">Find Venues</Link>
+            <Link to="/my-bookings">My Bookings</Link>
             <ProfileIcon />
           </>
         ) : (

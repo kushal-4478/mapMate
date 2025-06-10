@@ -57,10 +57,9 @@ router.post("/getsuggestions",protect, getSuggestions);
 
 //BOOKING 
 // Booking routes
-router.post('/book', createBooking); // Create a new booking
-//router.post('/create-payment', createPayment); // Create a payment for a booking
-router.get('/bookings', getAllBookings); // Get all bookings
-router.get('/bookings/:id', getBookingById); // Get a single booking by ID
+router.post('/book', protect, createBooking); // Create a new booking
+router.get('/bookings', protect, getAllBookings); // Get all bookings
+router.get('/bookings/:id', protect, getBookingById); // Get a single booking by ID
 
 // Protected profile route
 router.get("/profile", protect, getProfile);

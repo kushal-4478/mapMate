@@ -1,29 +1,52 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  placeId: { type: String, required: false },
-
-  category: { type: String, required: true }, // e.g., "restaurant", "concert", "museum"
-  title: { type: String, required: true }, // name of the event/place
-  address: { type: String, required: true },
-
-  date: { type: Date, required: true }, // Changed to Date type
-  time: { type: String, required: true },
-
-  guests: { 
-    type: Number, 
-    required: true,
-    min: [1, 'Number of guests must be at least 1'] 
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  amount: { 
-    type: Number, 
-    required: true,
-    min: [0, 'Amount cannot be negative'] 
+  venueName: {
+    type: String,
+    required: [true, 'Venue name is required']
   },
+  location: {
+    type: String,
+    required: [true, 'Location is required']
+  },
+  date: {
+    type: Date,
+    required: [true, 'Booking date is required']
+  },
+  time: {
+    type: String,
+    required: [true, 'Booking time is required']
+  },
+  guestCount: {
+    type: Number,
+    required: [true, 'Number of guests is required'],
+    min: [1, 'Must have at least 1 guest']
+  },
+  tableNumber: {
+    type: String
+  },
+  totalAmount: {
+    type: Number,
+    required: [true, 'Total amount is required'],
+    min: [0, 'Total amount cannot be negative']
+  },
+  specialRequests: {
+    type: String,
+    maxLength: [500, 'Special requests cannot exceed 500 characters']
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'cancelled'],
+    default: 'pending'
+  }
+}, {
+  timestamps: true
+});
 
-  status: { type: String, default: 'pending' },
-  paymentId: { type: String, default: null },
-}, { timestamps: true });
-
-export default mongoose.model('Booking', bookingSchema);
+const Booking = mongoose.model('Booking', bookingSchema);
+export default Booking;

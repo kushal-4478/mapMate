@@ -45,7 +45,7 @@ const ProfileIcon = () => {
             <i className="fas fa-user"></i>
             My Profile
           </div>
-          <Link to="/bookings" className="dropdown-item">
+          <Link to="/my-bookings" className="dropdown-item">
             <i className="fas fa-calendar"></i>
             My Bookings
           </Link>

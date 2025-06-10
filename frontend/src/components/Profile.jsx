@@ -1,37 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Profile.css';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [personalDetails, setPersonalDetails] = useState({
+    occupation: '',
+    education: '',
+    languages: [],
+    bio: '',
+    age: ''
+  });
 
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        if (!token) {
-          console.error('No auth token found');
-          return;
-        }
-
-        const response = await fetch('http://localhost:5000/api/users/profile', {
-          method: 'GET',
+        const response = await axios.get('http://localhost:5000/api/users/profile', {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${token}`
           }
         });
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        
-        const data = await response.json();
-        setUserData(data);
+        setUserData(response.data);
+        // Initialize personal details from fetched data
+        setPersonalDetails({
+          occupation: response.data.personalDetails?.occupation || '',
+          education: response.data.personalDetails?.education || '',
+          languages: response.data.personalDetails?.languages || [],
+          bio: response.data.personalDetails?.bio || '',
+          age: response.data.personalDetails?.age || ''
+        });
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
+        console.error('Error fetching profile:', error);
         setIsLoading(false);
       }
     };
@@ -39,41 +44,30 @@ const Profile = () => {
     fetchUserData();
   }, []);
 
-  const handleImageUpload = async (e) => {
+  const handlePersonalDetailsUpdate = async () => {
     try {
-      const file = e.target.files[0];
-      if (!file) return;
-
       const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
+      await axios.put(
+        'http://localhost:5000/api/users/update-personal-details',
+        personalDetails,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
 
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const response = await fetch('http://localhost:5000/api/users/upload-avatar', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to upload image');
-      }
-
-      const data = await response.json();
+      // Update local state
       setUserData(prev => ({
         ...prev,
-        avatar: data.avatar
+        personalDetails: {
+          ...prev.personalDetails,
+          ...personalDetails
+        }
       }));
-
+      setIsEditing(false);
     } catch (error) {
-      console.error('Image upload error:', error);
-      // Add user feedback here
+      console.error('Error updating personal details:', error);
     }
   };
 
@@ -85,44 +79,84 @@ const Profile = () => {
     <div className="profile-container">
       <div className="profile-header">
         <div className="profile-avatar">
-          <img 
-            src={userData?.avatar?.url || '/default-avatar.png'} 
-            alt="Profile" 
-          />
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleImageUpload} 
-            className="upload-input"
-          />
+          <img src={userData?.avatar?.url || '/default-avatar.png'} alt="Profile" />
         </div>
         <h1>{userData?.username}</h1>
         <p className="email">{userData?.email}</p>
       </div>
 
-      <div className="profile-content">
-        <div className="info-card">
-          <h3>Personal Information</h3>
+      <div className="info-card">
+        <div className="card-header">
+          <h3>Personal Details</h3>
+          <button 
+            className="edit-button"
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            {isEditing ? 'Cancel' : 'Edit'}
+          </button>
+        </div>
+
+        {isEditing ? (
+          <div className="edit-form">
+            <div className="form-group">
+              <label>Occupation</label>
+              <input
+                type="text"
+                value={personalDetails.occupation}
+                onChange={(e) => setPersonalDetails(prev => ({
+                  ...prev,
+                  occupation: e.target.value
+                }))}
+              />
+            </div>
+            <div className="form-group">
+              <label>Education</label>
+              <input
+                type="text"
+                value={personalDetails.education}
+                onChange={(e) => setPersonalDetails(prev => ({
+                  ...prev,
+                  education: e.target.value
+                }))}
+              />
+            </div>
+            <div className="form-group">
+              <label>Languages (comma separated)</label>
+              <input
+                type="text"
+                value={personalDetails.languages.join(', ')}
+                onChange={(e) => setPersonalDetails(prev => ({
+                  ...prev,
+                  languages: e.target.value.split(',').map(lang => lang.trim())
+                }))}
+              />
+            </div>
+            <div className="form-group">
+              <label>Bio</label>
+              <textarea
+                value={personalDetails.bio}
+                onChange={(e) => setPersonalDetails(prev => ({
+                  ...prev,
+                  bio: e.target.value
+                }))}
+              />
+            </div>
+            <button 
+              className="save-button"
+              onClick={handlePersonalDetailsUpdate}
+            >
+              Save Changes
+            </button>
+          </div>
+        ) : (
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">Age</span>
-              <span className="value">{userData?.age || 'Not specified'}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">Gender</span>
-              <span className="value">{userData?.gender || 'Not specified'}</span>
-            </div>
-            <div className="info-item">
               <span className="label">Occupation</span>
-              <span className="value">
-                {userData?.personalDetails?.occupation || 'Not specified'}
-              </span>
+              <span className="value">{userData?.personalDetails?.occupation || 'Not specified'}</span>
             </div>
             <div className="info-item">
               <span className="label">Education</span>
-              <span className="value">
-                {userData?.personalDetails?.education || 'Not specified'}
-              </span>
+              <span className="value">{userData?.personalDetails?.education || 'Not specified'}</span>
             </div>
             <div className="info-item">
               <span className="label">Languages</span>
@@ -130,30 +164,12 @@ const Profile = () => {
                 {userData?.personalDetails?.languages?.join(', ') || 'Not specified'}
               </span>
             </div>
+            <div className="info-item full-width">
+              <span className="label">Bio</span>
+              <span className="value">{userData?.personalDetails?.bio || 'No bio available'}</span>
+            </div>
           </div>
-        </div>
-
-        <div className="info-card">
-          <h3>Bio</h3>
-          <p className="bio-text">
-            {userData?.personalDetails?.bio || 'No bio available'}
-          </p>
-        </div>
-
-        <div className="info-card">
-          <h3>Interests</h3>
-          <div className="interests-grid">
-            {userData?.interests?.length > 0 ? (
-              userData.interests.map((interest, index) => (
-                <span key={index} className="interest-tag">
-                  {interest}
-                </span>
-              ))
-            ) : (
-              <p>No interests added yet</p>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

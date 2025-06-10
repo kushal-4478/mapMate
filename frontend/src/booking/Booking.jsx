@@ -1,82 +1,152 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { createBooking } from "../services/api";
-import "./Booking.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import './Booking.css';
 
 const Booking = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { place } = location.state; // Get the selected place from state
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [guests, setGuests] = useState(1);
-  const [amount, setAmount] = useState(100); // Assume a default amount per guest
-  const [error, setError] = useState("");
+  const venue = location.state?.venue;
 
-  const handleBooking = async () => {
-    // Validate if placeId exists
-    // if (!place || !place.id) {
-    //   setError("Place ID is required but not provided.");
-    //   console.error("Error: Place ID is missing.");
-    //   return;
-    // }
+  // Redirect if no venue data
+  useEffect(() => {
+    if (!venue) {
+      navigate('/find-venue');
+    }
+  }, [venue, navigate]);
 
-    const bookingData = {
-      userId: "USER_ID", // Replace with actual user ID from auth
-      placeId: place.id || "123456", // Ensure placeId is included
-      category: place.types[0] || "venue", // Use first type or default
-      title: place.name, // Venue name included here
-      venueName: place.name, // Explicitly include venueName
-      venueType: place.types[0] || "general", // Include venueType
-      address: place.address,
-      location: place.location || "Unknown Location", // Add location if available
-      date: date, // Should be in ISO format (YYYY-MM-DD)
-      time: time,
-      guests: parseInt(guests),
-      amount: parseFloat(amount),
-    };
+  const [bookingData, setBookingData] = useState({
+    venueName: venue?.name || '',
+    location: venue?.location || '',
+    date: '',
+    time: '',
+    guestCount: 1,
+    tableNumber: '',
+    specialRequests: '',
+    totalAmount: venue?.price_level ? venue.price_level * 1000 : 2000 // Default price calculation
+  });
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await createBooking(bookingData);
-      if (response.success) {
-        navigate("/payment", { 
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No auth token found');
+      }
+
+      const response = await axios.post(
+        'http://localhost:5000/api/users/book',
+        {
+          ...bookingData,
+          venueName: venue.name,
+          location: venue.vicinity || venue.location,
+          coordinates: venue.coordinates
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.success) {
+        navigate('/payment', { 
           state: { 
-            bookingId: response.bookingId, 
-            amount: bookingData.amount 
-          } 
+            bookingId: response.data.booking._id,
+            amount: bookingData.totalAmount,
+            venueName: venue.name
+          }
         });
       }
     } catch (error) {
-      console.error("Error creating booking:", error.response?.data || error);
-      setError(error.response?.data?.message || "Failed to create booking.");
+      console.error('Booking error:', error.response?.data?.message || error.message);
+      alert(`Booking failed: ${error.response?.data?.message || 'Please try again'}`);
     }
   };
 
+  if (!venue) {
+    return <div className="loading">Loading...</div>;
+  }
+
   return (
     <div className="booking-container">
-      <h1>Booking for {place?.name || "Unknown Venue"}</h1>
-      <p>{place?.address || "Address not available"}</p>
-      {error && <div className="error-message">{error}</div>}
-      <label>
-        Date:
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-      </label>
-      <label>
-        Time:
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-      </label>
-      <label>
-        Number of Guests:
-        <input
-          type="number"
-          value={guests}
-          onChange={(e) => setGuests(e.target.value)}
-          min="1"
-        />
-      </label>
-      <button className="proceed-button" onClick={handleBooking}>
-        Book Your Seat
-      </button>
+      <div className="venue-summary">
+        <h2>{venue.name}</h2>
+        <p>{venue.vicinity || venue.location}</p>
+        {venue.rating && (
+          <div className="venue-rating">
+            Rating: {venue.rating} ⭐ ({venue.user_ratings_total} reviews)
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="booking-form">
+        <div className="form-group">
+          <label>Date</label>
+          <input
+            type="date"
+            required
+            min={new Date().toISOString().split('T')[0]}
+            value={bookingData.date}
+            onChange={(e) => setBookingData(prev => ({
+              ...prev,
+              date: e.target.value
+            }))}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Time</label>
+          <input
+            type="time"
+            required
+            value={bookingData.time}
+            onChange={(e) => setBookingData(prev => ({
+              ...prev,
+              time: e.target.value
+            }))}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Number of Guests</label>
+          <input
+            type="number"
+            min="1"
+            required
+            value={bookingData.guestCount}
+            onChange={(e) => setBookingData(prev => ({
+              ...prev,
+              guestCount: parseInt(e.target.value)
+            }))}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Special Requests (Optional)</label>
+          <textarea
+            value={bookingData.specialRequests}
+            onChange={(e) => setBookingData(prev => ({
+              ...prev,
+              specialRequests: e.target.value
+            }))}
+            maxLength="500"
+          />
+        </div>
+
+        <div className="booking-summary">
+          <h3>Booking Summary</h3>
+          <p>Venue: {venue.name}</p>
+          <p>Location: {venue.vicinity || venue.location}</p>
+          <p>Price Level: {'₹'.repeat(venue.price_level || 1)}</p>
+          <p className="total-amount">Total Amount: ₹{bookingData.totalAmount}</p>
+        </div>
+
+        <button type="submit" className="submit-button">
+          Proceed to Payment
+        </button>
+      </form>
     </div>
   );
 };

@@ -28,7 +28,7 @@ const Home = () => {
         <div className="feature-card">
           <h2>Perfect Venues</h2>
           <p>Find and book ideal meeting locations</p>
-          <Link to="/venues" className="feature-button">
+          <Link to="/find-venue" className="feature-button">
             Find Venues
           </Link>
         </div>

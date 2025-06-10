@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./web";
-import Dashboard from "./components/Dashboard";
+import FindVenue from "./components/FindVenue"; // Change Dashboard to FindVenue
 import Login from "./Login";
 import Signin from "./Signin";
 import Contact from "./contact";
@@ -14,13 +14,18 @@ import PaymentSuccess from './booking/PaymentSuccess';
 import PaymentCancel from './booking/PaymentCancel';
 import PrivateRoute from './components/PrivateRoute';
 import Profile from './components/Profile';
+import GetBookings from './components/GetBookings'; // Add this import
+import { AppProvider } from './context/AppContext';
+import LandingPage from './components/LandingPage';
 
 const App = () => {
   return (
-    <Router>
+    <AppProvider> 
+        <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/contact" element={<Contact />} />
@@ -33,10 +38,10 @@ const App = () => {
           } 
         />
         <Route
-          path="/dashboard"
+          path="/find-venue"  // Changed from /dashboard
           element={
             <PrivateRoute>
-              <Dashboard />
+              <FindVenue />  // Changed from Dashboard
             </PrivateRoute>
           }
         />
@@ -61,9 +66,19 @@ const App = () => {
             </PrivateRoute>
           } 
         />
+        <Route 
+          path="/my-bookings" 
+          element={
+            <PrivateRoute>
+              <GetBookings />
+            </PrivateRoute>
+          } 
+        />
         <Route path="*" element={<h1>404: Page Not Found</h1>} />
       </Routes>
     </Router>
+    </AppProvider>
+    
   );
 };
 

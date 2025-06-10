@@ -187,67 +187,49 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 //GET PROFILE
-export const getProfile = asyncHandler(async (req, res) => {
-  try {
-    console.log('Profile request received');
-    console.log('User from token:', req.user);
+export const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId)
+            .select('-password -confirmPassword')
+            .lean();
 
-    // Get userId from token payload
-    const userId = req.user.userId || req.user.id; // Handle both formats
-    
-    if (!userId) {
-      console.log('No userId found in token');
-      return res.status(401).json({ message: 'User ID not found in token' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('Fetched user profile:', user); // Debug log
+        res.json(user);
+    } catch (error) {
+        console.error('Profile fetch error:', error);
+        res.status(500).json({ message: 'Error fetching profile' });
     }
-
-    const user = await User.findById(userId)
-      .select('-password -refreshToken');
-
-    if (!user) {
-      console.log('User not found in database');
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    console.log('User found:', user);
-    res.json({
-      username: user.username,
-      email: user.email,
-      phone: user.phone || '',
-      location: user.location || '',
-      bio: user.bio || ''
-    });
-  } catch (error) {
-    console.error('Profile fetch error:', error);
-    res.status(500).json({ message: 'Error fetching profile data' });
-  }
-});
+};
 
 export const updatePersonalDetails = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const { occupation, education, age, languages, bio } = req.body;
-
+        const { occupation, education, languages, bio } = req.body;
+        
         const updatedUser = await User.findByIdAndUpdate(
-            userId,
+            req.user.userId,
             {
                 $set: {
                     'personalDetails.occupation': occupation,
                     'personalDetails.education': education,
-                    'personalDetails.age': age,
                     'personalDetails.languages': languages,
                     'personalDetails.bio': bio
                 }
             },
             { new: true, runValidators: true }
-        ).select('-password');
+        ).select('-password -confirmPassword');
 
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        console.log('Updated user profile:', updatedUser); // Debug log
         res.json(updatedUser);
     } catch (error) {
-        console.error('Update personal details error:', error);
-        res.status(500).json({ message: 'Error updating personal details' });
+        console.error('Profile update error:', error);
+        res.status(500).json({ message: 'Error updating profile' });
     }
 };
