@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -13,10 +14,10 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -33,21 +34,26 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          age: parseInt(formData.age),
+          gender: formData.gender,
+        }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        alert("Sign up successful!");
-        // Redirect to login page or dashboard
-        window.location.href = "/login";
-      } else {
-        alert(data.message || "Sign up failed");
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
       }
+
+      alert("Sign up successful!");
+      navigate("/login");
     } catch (error) {
       console.error("Error signing up:", error);
-      alert("An error occurred. Please try again.");
+      alert(error.message || "An error occurred during registration");
     }
   };
 

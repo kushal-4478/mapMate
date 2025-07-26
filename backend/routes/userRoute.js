@@ -4,8 +4,9 @@ import {
   loginUser, 
   signOutUser, 
   refreshAccessToken,
-  getProfile ,
-  updatePersonalDetails
+  getProfile,
+  updatePersonalDetails,
+  searchUsers  // Add this import
 } from "../controllers/userControllers.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { getSuggestions } from "../controllers/getSuggestion.js";
@@ -42,7 +43,7 @@ const upload = multer({
 const router = express.Router();
 
 //routing
-router.post("/signup", registerUser);
+router.post("/signup", registerUser);  // This should match your frontend route
 
 router.post("/login", loginUser);
 
@@ -111,5 +112,8 @@ router.post('/upload-avatar', protect, upload.single('avatar'), async (req, res)
     res.status(500).json({ message: 'Error uploading avatar' });
   }
 });
+
+// Route to get user profile
+router.get('/search', protect, searchUsers);
 
 export default router;

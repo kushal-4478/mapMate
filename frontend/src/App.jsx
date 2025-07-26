@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./web";
 import FindVenue from "./components/FindVenue"; // Change Dashboard to FindVenue
 import Login from "./Login";
-import Signin from "./Signin";
+import SignUp from "./SignUp"; // Changed from Signin
 import Contact from "./contact";
 import Navbar from "./components/Navbar";
 import Home from './components/Home';
@@ -17,6 +17,7 @@ import Profile from './components/Profile';
 import GetBookings from './components/GetBookings'; // Add this import
 import { AppProvider } from './context/AppContext';
 import LandingPage from './components/LandingPage';
+import LocationSharing from './components/LocationSharing';
 
 const App = () => {
   return (
@@ -27,7 +28,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<SignUp />} /> {/* Changed from /signin */}
         <Route path="/contact" element={<Contact />} />
         <Route 
           path="/home" 
@@ -74,6 +75,7 @@ const App = () => {
             </PrivateRoute>
           } 
         />
+        <Route path="/location-sharing" element={<LocationSharing />} />
         <Route path="*" element={<h1>404: Page Not Found</h1>} />
       </Routes>
     </Router>

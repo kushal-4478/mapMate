@@ -9,22 +9,22 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link to="/" className="nav-logo">
-        Perfect Meeting Point
+        MeetPoint Pro
       </Link>
       
       <div className="nav-links">
-        {isAuthenticated ? (
+        {!isAuthenticated ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/signup">Sign Up</Link> {/* Changed from /signin */}
+          </>
+        ) : (
           <>
             <Link to="/home">Home</Link>
             <Link to="/explore">Explore</Link>
             <Link to="/find-venue">Find Venues</Link>
             <Link to="/my-bookings">My Bookings</Link>
             <ProfileIcon />
-          </>
-        ) : (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/signin">Join Now</Link>
           </>
         )}
       </div>

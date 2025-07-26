@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 
 
-
-
 // Define the user schema
 const userSchema = new mongoose.Schema({
     username: {
@@ -101,22 +99,29 @@ const userSchema = new mongoose.Schema({
     location: {
         city: {
             type: String,
-            trim: true
+            trim: true,
+            default: ''
         },
         state: {
             type: String,
-            trim: true
+            trim: true,
+            default: ''
         },
         country: {
             type: String,
-            trim: true
+            trim: true,
+            default: ''
         },
         coordinates: {
             type: {
                 type: String,
+                enum: ['Point'],
                 default: 'Point'
             },
-            coordinates: [Number]
+            coordinates: {
+                type: [Number],
+                default: [0, 0]
+            }
         }
     },
     preferences: {
@@ -139,7 +144,7 @@ const userSchema = new mongoose.Schema({
         interestedIn: {
             type: String,
             enum: ['Men', 'Women', 'Both'],
-            required: true
+            default: 'Both'
         }
     },
     socialLinks: {
@@ -160,6 +165,40 @@ const userSchema = new mongoose.Schema({
         isProfileComplete: {
             type: Boolean,
             default: false
+        }
+    },
+    locationSharing: {
+        isSharing: {
+            type: Boolean,
+            default: false
+        },
+        sharedWith: [{
+            userId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            startTime: {
+                type: Date,
+                default: Date.now
+            },
+            expiryTime: {
+                type: Date
+            }
+        }],
+        currentLocation: {
+            type: {
+                type: String,
+                enum: ['Point'],
+                default: 'Point'
+            },
+            coordinates: {
+                type: [Number],
+                default: [0, 0]
+            },
+            lastUpdated: {
+                type: Date,
+                default: Date.now
+            }
         }
     }
 });

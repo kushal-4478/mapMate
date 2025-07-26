@@ -1,6 +1,7 @@
 import express from "express";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import userRoute from "./routes/userRoute.js";
+import locationRoutes from "./routes/locationRoutes.js";
 import cors from "cors";
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors({
 // Mount routes - ensure userRoute is mounted before paymentRoutes
 app.use("/api/users", userRoute);
 app.use("/api/users", paymentRoutes);
+app.use('/api/location', locationRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
