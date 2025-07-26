@@ -57,10 +57,11 @@ app.use("/api/payment", paymentRoutes); // Payment routes (updated path)
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../Frontend/build')));
+    const frontendBuildPath = path.join(__dirname, '../Frontend/build');
+    app.use(express.static(frontendBuildPath));
     
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../Frontend/build/index.html'));
+        res.sendFile(path.join(frontendBuildPath, 'index.html'));
     });
 }
 
