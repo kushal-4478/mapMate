@@ -4,17 +4,16 @@
   "version": "1.0.0",
   "description": "It is right guy for meetup.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd backend && node server.js",
-    "dev": "nodemon backend/server.js",
-    "install-server": "cd backend && npm install",
-    "install-client": "cd frontend && npm install",
-    "install": "npm run install-server && npm run install-client",
-    "server": "cd backend && node server.js",
-    "client": "cd frontend && npm start",
-    "build": "cd frontend && npm install && npm run build"
-  },
+"scripts": {
+  "start": "npm run build && node backend/server.js",
+  "build": "cd frontend && npm install && npm run build",
+  "dev": "nodemon backend/server.js",
+  "install-server": "cd backend && npm install",
+  "install-client": "cd frontend && npm install",
+  "install": "npm run install-server && npm run install-client",
+  "server": "cd backend && node server.js",
+  "client": "cd frontend && npm start"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/divyam63/DATING-APP.git"
