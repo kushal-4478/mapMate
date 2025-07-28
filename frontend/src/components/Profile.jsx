@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Profile.css';
+import api from './api';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -18,13 +19,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        const response = await axios.get('http://localhost:5000/api/users/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
+        const response = await api.get('/api/users/profile');
         setUserData(response.data);
         // Initialize personal details from fetched data
         setPersonalDetails({
