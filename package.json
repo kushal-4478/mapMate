@@ -2,57 +2,12 @@
   "type": "module",
   "name": "meetpoint-pro",
   "version": "1.0.0",
-  "description": "It is right guy for meetup.",
-  "main": "index.js",
-"scripts": {
-  "install": "npm run install-server && npm run install-client",
-
-  "install-server": "cd backend && npm install",
-  "install-client": "cd frontend && npm install",
-
-  "build": "cd frontend && npm run build",
-
-  "start": "npm run build && node backend/server.js",
-
-  "dev": "nodemon backend/server.js",
-
-  "server": "cd backend && node server.js",
-  "client": "cd frontend && npm start"
-},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/divyam63/DATING-APP.git"
-  },
-  "keywords": [
-    "date",
-    "partner"
-  ],
-  "author": "divyam gupta",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/divyam63/DATING-APP/issues"
-  },
-  "homepage": "https://github.com/divyam63/DATING-APP#readme",
-  "dependencies": {
-    "axios": "^1.8.4",
-    "base64url": "^3.0.1",
-    "bcrypt": "^5.1.1",
-    "bcryptjs": "^2.4.3",
-    "cloudinary": "^2.6.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.15.0",
-    "mongoose": "^8.12.1",
-    "multer": "^2.0.1",
-    "nodemon": "^3.1.9",
-    "passport-google-oauth20": "^2.0.0",
-    "passport-oauth2": "^1.8.0",
-    "razorpay": "^2.9.6",
-    "stripe": "^18.0.0",
-    "validator": "^13.12.0"
+  "scripts": {
+    "start": "node backend/server.js",
+    "install-all": "npm install && cd backend && npm install && cd ../Frontend && npm install",
+    "build": "cd Frontend && npm install && npm run build",
+    "render-build": "npm run install-all && npm run build",
+    "dev": "nodemon backend/server.js"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: "./config/config.env" });
 
 // Constants
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 // Middleware
 app.use(cors({
@@ -57,11 +57,10 @@ app.use("/api/payment", paymentRoutes); // Payment routes (updated path)
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    const frontendBuildPath = path.join(__dirname, '../frontend/build');
-    app.use(express.static(frontendBuildPath));
+    app.use(express.static(path.join(__dirname, '../Frontend/build')));
     
     app.get('*', (req, res) => {
-        res.sendFile(path.join(frontendBuildPath, 'index.html'));
+        res.sendFile(path.join(__dirname, '../Frontend/build', 'index.html'));
     });
 }
 
@@ -76,8 +75,8 @@ const startServer = async () => {
         await connectDB();
         
         // Then start the Express server
-        app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server is running on port ${PORT}`);
         });
     } catch (error) {
         console.error('Failed to start server:', error.message);
