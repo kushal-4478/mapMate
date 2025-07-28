@@ -57,7 +57,7 @@ app.use("/api/payment", paymentRoutes); // Payment routes (updated path)
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    const frontendBuildPath = path.join(__dirname, '../Frontend/build');
+    const frontendBuildPath = path.join(__dirname, '../frontend/build');
     app.use(express.static(frontendBuildPath));
     
     app.get('*', (req, res) => {

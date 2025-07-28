@@ -5,12 +5,17 @@
   "description": "It is right guy for meetup.",
   "main": "index.js",
 "scripts": {
-  "start": "npm run build && node backend/server.js",
-  "build": "cd frontend && npm install && npm run build",
-  "dev": "nodemon backend/server.js",
+  "install": "npm run install-server && npm run install-client",
+
   "install-server": "cd backend && npm install",
   "install-client": "cd frontend && npm install",
-  "install": "npm run install-server && npm run install-client",
+
+  "build": "cd frontend && npm run build",
+
+  "start": "npm run build && node backend/server.js",
+
+  "dev": "nodemon backend/server.js",
+
   "server": "cd backend && node server.js",
   "client": "cd frontend && npm start"
 },
