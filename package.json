@@ -9,11 +9,11 @@
     "start": "cd backend && node server.js",
     "dev": "nodemon backend/server.js",
     "install-server": "cd backend && npm install",
-    "install-client": "cd Frontend && npm install",
+    "install-client": "cd frontend && npm install",
     "install": "npm run install-server && npm run install-client",
     "server": "cd backend && node server.js",
-    "client": "cd Frontend && npm start",
-    "build": "cd Frontend && npm install && npm run build"
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm install && npm run build"
   },
   "repository": {
     "type": "git",
