@@ -7,44 +7,56 @@ import jwt from "jsonwebtoken";
 //REGIUSTER USER
 // This controller handles user registration by creating a new user in the database
 // Controller to handle user registration
-export const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, age, gender } = req.body;
+export const registerUser = async (req, res) => {
+  try {
+    const { username, email, password, age, gender } = req.body;
 
-  // Validate required fields
-  if (!username || !email || !password || !age || !gender) {
-    res.status(400);
-    throw new Error("Please provide all required fields");
-  }
-
-  // Check if the user already exists
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
-
-  // Create a new user
-  const user = await User.create({
-    username,
-    email,
-    password,
-    age,
-    gender,
-  });
-
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      username: user.username,
-      email: user.email,
-      age: user.age,
-      gender: user.gender,
+    const user = await User.create({
+      username,
+      email,
+      password,
+      age,
+      gender,
+      location: {
+        city: '',
+        state: '',
+        country: '',
+        coordinates: {
+          type: 'Point',
+          coordinates: [0, 0] // [longitude, latitude]
+        }
+      },
+      preferences: {
+        ageRange: {
+          min: 18,
+          max: 50
+        },
+        distance: 50,
+        interestedIn: 'Both'
+      }
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '24h'
+    });
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error creating user'
+    });
   }
-});
+};
 
 //LOGIN USER
 
@@ -231,5 +243,42 @@ export const updatePersonalDetails = async (req, res) => {
     } catch (error) {
         console.error('Profile update error:', error);
         res.status(500).json({ message: 'Error updating profile' });
+    }
+};
+
+export const searchUsers = async (req, res) => {
+    try {
+        const { query } = req.query;
+        
+        if (!query) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Search query is required' 
+            });
+        }
+
+        // Search users by username or email, excluding the current user
+        const users = await User.find({
+            $and: [
+                { _id: { $ne: req.user.userId } }, // Exclude current user
+                {
+                    $or: [
+                        { username: { $regex: query, $options: 'i' } },
+                        { email: { $regex: query, $options: 'i' } }
+                    ]
+                }
+            ]
+        }).select('username email _id');
+
+        res.status(200).json({
+            success: true,
+            users
+        });
+    } catch (error) {
+        console.error('Search error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error searching users'
+        });
     }
 };

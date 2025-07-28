@@ -6,11 +6,11 @@ const LandingPage = () => {
   return (
     <div className="landing-container">
       <header className="hero-section">
-        <h1>Perfect Meeting Point</h1>
+        <h1>Welcome to MeetPoint Pro</h1>
         <p className="tagline">Find the ideal spot to meet halfway</p>
         <div className="cta-buttons">
           <Link to="/login" className="cta-button login">Login</Link>
-          <Link to="/signin" className="cta-button signup">Sign Up</Link>
+          <Link to="/signup" className="cta-button signup">Sign Up</Link> {/* Changed from /signin */}
         </div>
       </header>
 
