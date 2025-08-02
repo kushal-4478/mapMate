@@ -7,7 +7,7 @@ passport.use(
         {
             clientID: "YOUR_GOOGLE_CLIENT_ID", // Replace with your Google Client ID
             clientSecret: "YOUR_GOOGLE_CLIENT_SECRET", // Replace with your Google Client Secret
-            callbackURL: "http://localhost:5000/auth/google/callback", // Backend callback URL
+            callbackURL: `${process.env.BACKEND_API_URL}/auth/google/callback`, // Backend callback URL
         },
         (accessToken, refreshToken, profile, done) => {
             // Save user profile to database or session

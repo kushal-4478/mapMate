@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import axios from 'axios';
+import api from '../services/api';
 import './LocationSharing.css';
 import UserSearch from './UserSearch';
-
-const BASE_URL = 'http://localhost:5000'; // Add this at the top with your imports
+import config from '../config';
 
 const LocationSharing = () => {
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -20,7 +19,7 @@ const LocationSharing = () => {
                 position => {
                     const { latitude, longitude } = position.coords;
                     setCurrentLocation({ lat: latitude, lng: longitude });
-                    updateLocationOnServer(latitude, longitude);
+                    updateLocation(latitude, longitude);
                 },
                 error => console.error(error),
                 { enableHighAccuracy: true }
@@ -28,31 +27,26 @@ const LocationSharing = () => {
         }
 
         // Fetch shared locations periodically
-        const interval = setInterval(fetchSharedLocations, 10000);
+        const interval = setInterval(fetchSharedLocations, config.updateInterval);
         return () => clearInterval(interval);
     }, []);
 
-    const updateLocationOnServer = async (latitude, longitude) => {
+    const updateLocation = async (latitude, longitude) => {
         try {
-            await axios.put(`${BASE_URL}/api/location/update`, 
-                { latitude, longitude },
-                { 
-                    headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Changed from 'token' to 'authToken'
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+            await api.put(config.api.endpoints.location + '/update', {
+                latitude,
+                longitude
+            });
         } catch (error) {
-            console.error('Error updating location:', error);
+            console.error('Location update failed:', error);
         }
     };
 
     const handleShareLocation = async () => {
         try {
-            await axios.post(`${BASE_URL}/api/location/share`,
+            await axios.post(`${config.apiBaseUrl}/api/location/share`,
                 { targetUserId },
-                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }} // Changed from 'token' to 'authToken'
+                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }}
             );
             alert('Location shared successfully!');
         } catch (error) {
@@ -62,10 +56,10 @@ const LocationSharing = () => {
 
     const fetchSharedLocations = async () => {
         try {
-            const { data } = await axios.get(`${BASE_URL}/api/location/shared`,
+            const { data } = await axios.get(`${config.apiBaseUrl}/api/location/shared`,
                 { 
                     headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Changed from 'token' to 'authToken'
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 }
             );
@@ -77,8 +71,8 @@ const LocationSharing = () => {
 
     const calculateMidpoint = async (userId) => {
         try {
-            const { data } = await axios.get(`${BASE_URL}/api/location/midpoint/${userId}`,
-                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }} // Changed from 'token' to 'authToken'
+            const { data } = await axios.get(`${config.apiBaseUrl}/api/location/midpoint/${userId}`,
+                { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }}
             );
             setMidpoint(data.midpoint);
         } catch (error) {
@@ -106,11 +100,14 @@ const LocationSharing = () => {
                 )}
             </div>
 
-            <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+            <LoadScript googleMapsApiKey={config.googleMaps.apiKey}>
                 <GoogleMap
                     center={currentLocation || { lat: 0, lng: 0 }}
-                    zoom={12}
-                    mapContainerStyle={{ width: '100%', height: '400px' }}
+                    zoom={config.googleMaps.defaultZoom}
+                    mapContainerStyle={{ 
+                        width: '100%', 
+                        height: `${config.googleMaps.mapHeight}px` 
+                    }}
                 >
                     {currentLocation && (
                         <Marker
@@ -136,7 +133,7 @@ const LocationSharing = () => {
                                 lng: midpoint.coordinates[0]
                             }}
                             label="Meet"
-                            icon="http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                            icon={config.googleMaps.meetpointIcon}
                         />
                     )}
                 </GoogleMap>

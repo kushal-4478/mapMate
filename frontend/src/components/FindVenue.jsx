@@ -31,7 +31,7 @@ const FindVenue = () => {
       
       const token = localStorage.getItem('authToken');
       const response = await axios.post(
-        'http://localhost:5000/api/users/getsuggestions',
+        `/api/users/getsuggestions`,
         {
           location1: { 
             lat: parseFloat(location1.split(',')[0]), 

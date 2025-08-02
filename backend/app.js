@@ -9,7 +9,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.NODE_ENV==='production'?"REACT_APP_API_URL":"http://localhost:3000",
   credentials: true
 }));
 

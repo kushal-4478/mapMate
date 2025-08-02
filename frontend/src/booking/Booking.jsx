@@ -35,7 +35,7 @@ const Booking = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:5000/api/users/book',
+        `/api/users/book`,
         {
           ...bookingData,
           venueName: venue.name,

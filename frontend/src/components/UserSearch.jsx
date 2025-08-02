@@ -24,7 +24,7 @@ const UserSearch = ({ onUserSelect }) => {
             }
 
             const { data } = await axios.get(
-                `http://localhost:5000/api/users/search?query=${value}`,
+                `/api/users/search?query=${value}`,
                 {
                     headers: { 
                         'Authorization': `Bearer ${token}`,

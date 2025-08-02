@@ -2,11 +2,10 @@ import axios from 'axios';
 import config from '../config';
 
 const api = axios.create({
-    baseURL: config.apiBaseUrl,
+    baseURL: config.apiUrl,
     headers: {
         'Content-Type': 'application/json'
-    },
-    withCredentials: true
+    }
 });
 
 api.interceptors.request.use(config => {
@@ -19,7 +18,7 @@ api.interceptors.request.use(config => {
 
 export default api;
 
-const API_BASE_URL = "http://localhost:5000/api/users"; // Backend base URL
+const API_BASE_URL = `/api/users`; // Backend base URL
 
 // Function to call the /getsuggestions route
 export const getSuggestions = async (data) => {

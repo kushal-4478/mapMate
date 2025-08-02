@@ -43,7 +43,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem('authToken');
       await axios.put(
-        'http://localhost:5000/api/users/update-personal-details',
+        `/api/users/update-personal-details`,
         personalDetails,
         {
           headers: {

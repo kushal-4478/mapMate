@@ -7,15 +7,15 @@ const Payment = () => {
 
     const handlePayNow = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/payment/create-checkout-session", {
+            const response = await fetch(`/api/payment/create-checkout-session`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     amount: parseInt(amount), // Convert amount to integer (smallest currency unit)
                     currency: currency, // ISO currency code (e.g., "usd")
                     paymentMode: paymentMode, // Payment mode (e.g., "card")
-                    successUrl: "http://localhost:3000/payment-success", // Success page URL
-                    cancelUrl: "http://localhost:3000/payment-cancel", // Cancel page URL
+                    successUrl: `${REACT_APP_API_URL}/payment-success`, // Success page URL
+                    cancelUrl: `${REACT_APP_API_URL}/payment-cancel`, // Cancel page URL
                 }),
             });
 
