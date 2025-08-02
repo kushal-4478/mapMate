@@ -57,16 +57,16 @@ app.use("/api/payment", paymentRoutes); // Payment routes (updated path)
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../Frontend/build')));
+    app.use(express.static(path.join(__dirname, '../frontend/build')));
     
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../Frontend/build', 'index.html'));
+        res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
     });
 }
 
 // Default Route
 app.get('/', (req, res) => {
-    res.send('Welcome to the Dating App Backend!');
+    res.send('Welcome to the Meet point Pro Backend!');
 });
 
 const startServer = async () => {

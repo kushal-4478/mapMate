@@ -20,6 +20,7 @@
     "express-async-handler": "^1.2.0",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.1",
+    "meetpoint-pro": "file:..",
     "mongoose": "^7.4.3",
     "passport": "^0.6.0"
   }

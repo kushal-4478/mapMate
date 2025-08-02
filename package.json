@@ -2,14 +2,9 @@
   "name": "meetpoint-pro",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "install-server": "cd backend && npm install",
-    "install-client": "cd Frontend && npm install",
-    "install-all": "npm run install-server && npm run install-client",
-    "build": "cd Frontend && npm install && npm run build",
-    "render-build": "npm run install-all && npm run build",
-    "start": "cd backend && node server.js",
-    "dev": "nodemon backend/server.js"
+"scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm run start --prefix backend"
   },
   "engines": {
     "node": ">=16.0.0"
