@@ -1,4 +1,3 @@
-import axios from "axios";
 import asyncHandler from "../utils/asyncHandler.js";
 import dotenv from "dotenv";
 dotenv.config();
