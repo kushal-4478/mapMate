@@ -22,6 +22,7 @@ dotenv.config({ path: "./config/config.env" });
 const PORT = process.env.PORT || 10000;
 
 // Middleware
+console.log(process.env.BASE_URL);
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
         ? process.env.PRODUCTION_URL

@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import axios from 'axios';
-import './FindVenue.css';
 
+import './FindVenue.css';
+import api from '../services/api.js';
 const FindVenue = () => {
   const [location1, setLocation1] = useState('');
   const [location2, setLocation2] = useState('');
@@ -30,7 +30,8 @@ const FindVenue = () => {
       setError(null);
       
       const token = localStorage.getItem('authToken');
-      const response = await axios.post(
+   
+      const response = await api.post(
         `/api/users/getsuggestions`,
         {
           location1: { 

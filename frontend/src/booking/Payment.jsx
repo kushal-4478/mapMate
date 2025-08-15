@@ -1,39 +1,43 @@
 import React, { useState } from "react";
-import "./Payment.css"; // Import your CSS file for styling
+import "./Payment.css";
+import { useLocation } from "react-router-dom";
+import api from "../services/api";
+
 const Payment = () => {
     const [amount, setAmount] = useState("");
-    const [currency, setCurrency] = useState("usd"); // Default currency
-    const [paymentMode, setPaymentMode] = useState("card"); // Default payment mode
+    const [currency, setCurrency] = useState("usd");
+    const [paymentMode, setPaymentMode] = useState("card");
+
+    // ✅ Hook is called here, at the top level
+    const location = useLocation();
+    const { bookingId, amount: bookingAmount, venueName } = location.state || {};
 
     const handlePayNow = async () => {
+        console.log(process.env.REACT_APP_API_URL);
         try {
-            const response = await fetch(`/api/payment/create-checkout-session`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    amount: parseInt(amount), // Convert amount to integer (smallest currency unit)
-                    currency: currency, // ISO currency code (e.g., "usd")
-                    paymentMode: paymentMode, // Payment mode (e.g., "card")
-                    successUrl: `${REACT_APP_API_URL}/payment-success`, // Success page URL
-                    cancelUrl: `${REACT_APP_API_URL}/payment-cancel`, // Cancel page URL
-                }),
-            });
+            const response = await api.post(
+                "/api/payment/create-checkout-session",
+                {
+                    amount: parseInt(amount || bookingAmount), // fallback to bookingAmount
+                    currency: currency,
+                    paymentMode: paymentMode,
+                    bookingId: bookingId,
+                    successUrl: `${process.env.REACT_APP_API_URL}/payment-success`,
+                    cancelUrl: `${process.env.REACT_APP_API_URL}/payment-cancel`,
+                },
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const { url } = await response.json();
-
-            if (!url) {
-                throw new Error("Failed to create Checkout session");
-            }
+            const { url } = response.data;
+            if (!url) throw new Error("Failed to create Checkout session");
 
             // Redirect to Stripe Checkout
             window.location.href = url;
         } catch (error) {
-            console.error("Error creating Checkout session:", error.message);
-            alert(error.message);
+            console.error("Error creating Checkout session:", error);
+            alert(error.response?.data?.message || error.message);
         }
     };
 

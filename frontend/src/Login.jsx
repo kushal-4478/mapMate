@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Replace useHistory with useNavigate
-
+import api from "./services/api";
 const App = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [message, setMessage] = useState('');
@@ -19,17 +19,21 @@ const handleSubmit = async (e) => {
 
   try {
     
-    const response = await fetch(`/api/users/login`, { // Ensure this matches your backend route
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const response = await api.post(
+  "api/users/login", // Ensure this matches your backend route
+  credentials, // Axios automatically JSON-stringifies objects
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
 
-    const data = await response.json();
 
-    if (!response.ok) {
+    const data = await response.data;
+    console.log("Login response:", data);
+    console.log(data)
+    if (!data.success) {
       // Show backend error message if available
       throw new Error(data.message || "Login failed");
     }
@@ -53,7 +57,7 @@ const handleSubmit = async (e) => {
 
   } catch (error) {
     setMessage(error.message || "Login failed");
-    console.error("Error logging in:", error.message);
+    console.error("Error logging in:", error);
   }
 };
 

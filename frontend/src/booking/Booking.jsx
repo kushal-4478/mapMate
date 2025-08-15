@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Booking.css';
-
+import api from '../services/api';
 const Booking = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Booking = () => {
         throw new Error('No auth token found');
       }
 
-      const response = await axios.post(
+      const response = await api.post(
         `/api/users/book`,
         {
           ...bookingData,

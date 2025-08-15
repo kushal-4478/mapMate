@@ -20,9 +20,9 @@ export const createBooking = asyncHandler(async (req, res) => {
       totalAmount,
       specialRequests
     } = req.body;
-
+   console.log(req.user)
     const booking = await Booking.create({
-      userId: req.user.userId,
+      userId: req.user._id,
       venueName,
       location,
       date,
@@ -49,7 +49,8 @@ export const createBooking = asyncHandler(async (req, res) => {
 
 export const getAllBookings = asyncHandler(async (req, res) => {
   try {
-    const bookings = await Booking.find({ userId: req.user.userId })
+  
+    const bookings = await Booking.find({ userId: req.user._id })
       .sort({ createdAt: -1 });
 
     res.json({

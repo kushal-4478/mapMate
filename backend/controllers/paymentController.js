@@ -1,12 +1,12 @@
 import Stripe from "stripe";
-
+import Booking from "../models/bookingModel.js";
 const stripe = new Stripe("sk_test_51RAcrtITbk4wZ4pzy1ClslzaaUPiac2HqSXMEzCqM1mpyZjdK17Z8I8XXnTcqwNVyhZs6ucmgxsGKeSqoDy2VCMs00UPjxdwuX");
 
 export const createCheckoutSession = async (req, res) => {
     try {
         console.log("Request Body:", req.body); // Log the request body
 
-        const { amount, currency, paymentMode, successUrl, cancelUrl } = req.body;
+        const { amount, currency, paymentMode, successUrl, cancelUrl ,  bookingId} = req.body;
 
         // Validate required fields
         if (!amount || !currency || !successUrl || !cancelUrl) {
@@ -33,7 +33,10 @@ export const createCheckoutSession = async (req, res) => {
             success_url: successUrl, // Redirect here after successful payment
             cancel_url: cancelUrl, // Redirect here if the payment is canceled
         });
-
+        const updatedbooking=await Booking.findByIdAndUpdate(
+            bookingId,
+            { status: 'confirmed' }, // Update the booking status to 'paid'
+            { new: true }  )
         console.log("Checkout Session URL:", session.url); // Log the session URL
         res.status(200).json({ success: true, url: session.url });
     } catch (error) {

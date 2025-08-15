@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './GetBookings.css';
+import api from '../services/api';
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -11,7 +12,7 @@ const Bookings = () => {
     const fetchBookings = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get(`/api/users/bookings`, {
+        const response = await api.get(`/api/users/bookings`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

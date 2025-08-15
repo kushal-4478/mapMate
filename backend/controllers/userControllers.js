@@ -84,22 +84,33 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   // Changed token payload to use userId instead of id
+  // Generate token
   const token = jwt.sign(
-    { 
-      userId: user._id,  // Changed from id to userId
-      email: user.email 
-    }, 
+    { userId: user._id },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+    { expiresIn: '24h' }
+);
 
-  res.status(200).json({
-    _id: user._id,
-    username: user.username,
-    email: user.email,
-    token
-  });
+// Set token in cookie
+res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
 });
+
+// Send response
+res.json({
+    success: true,
+    token,
+    user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email
+    }
+});
+});
+
+
 
 //SIGN OUT USER ONLY IF IT IS LOGGED IN
 export const signOutUser = asyncHandler(async (req, res) => {

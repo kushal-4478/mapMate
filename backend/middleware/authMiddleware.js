@@ -1,24 +1,47 @@
 import jwt from 'jsonwebtoken';
+import User from '../models/usermodel.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
-export const protect = async (req, res, next) => {
+export const protect = asyncHandler(async (req, res, next) => {
     try {
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader?.startsWith('Bearer ')) {
-            return res.status(401).json({ message: 'Authorization header required' });
-        }
-
-        const token = authHeader.split(' ')[1];
+        // Get token from header
+        // console.log(req)
+        // console.log("Headers:", req.headers);
+        // console.log(req.headers)
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        console.log('Received token:', token);
+        
+        // Debug logging
 
         if (!token) {
-            return res.status(401).json({ message: 'No token provided' });
+            return res.status(401).json({
+                success: false,
+                message: 'Please provide a valid Bearer token'
+            });
         }
 
+        // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        console.log('Decoded token:', decoded);
+
+        // Get user
+        const user = await User.findById(decoded.userId);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Add user to request
+        req.user = user;
         next();
+
     } catch (error) {
-        console.error('Auth middleware error:', error);
-        res.status(401).json({ message: 'Invalid or expired token' });
+        console.error('Auth Error:', error);
+        res.status(401).json({
+            success: false,
+            message: `Authentication failed: ${error.message}`
+        });
     }
-};
+});

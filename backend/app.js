@@ -9,10 +9,9 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: process.env.NODE_ENV==='production'?"REACT_APP_API_URL":"http://localhost:3000",
+  origin: process.env.NODE_ENV==='production'?`${process.env.REACT_APP_API_URL}`:"http://localhost:3000",
   credentials: true
 }));
-
 // Mount routes - ensure userRoute is mounted before paymentRoutes
 app.use("/api/users", userRoute);
 app.use("/api/users", paymentRoutes);
@@ -20,6 +19,7 @@ app.use('/api/location', locationRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
+  console.log(req)
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error"
