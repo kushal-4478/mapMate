@@ -1,11 +1,11 @@
 import axios from "axios";
 import asyncHandler from "../utils/asyncHandler.js";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({path: './config/config.env'});
 
 // GoMaps API Key (add this to your .env file)
-const GOMAPS_API_KEY = process.env.GOMAPS_API_KEY || "AlzaSye80jUDJ5M5gxMy9QecCvzBlrIvaXZmtNY";
-
+const GOMAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+console.log(GOMAPS_API_KEY);
 // Function to calculate the midpoint between two locations
 const calculateMidpoint = (location1, location2) => {
     const lat = (location1.lat + location2.lat) / 2;
