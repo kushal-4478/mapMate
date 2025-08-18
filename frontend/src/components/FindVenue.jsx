@@ -1,9 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 import './FindVenue.css';
 import api from '../services/api.js';
+
+// const GOOGLE_MAPS_API_KEY = "AIzaSyE3D3KsBQ3rigY87df-KmliSzorSJ2YKyN";
+
 const FindVenue = () => {
   const [location1, setLocation1] = useState('');
   const [location2, setLocation2] = useState('');
@@ -12,6 +15,12 @@ const FindVenue = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState({
+    lat: 28.6139,
+    lng: 77.2090
+  });
 
   const navigate = useNavigate();
 
@@ -63,13 +72,11 @@ const FindVenue = () => {
   };
 
   const handleBookVenue = (venue) => {
-    // Safely extract coordinates
     const coordinates = {
       lat: venue.geometry?.location?.lat?.() || venue.geometry?.location?.lat || 0,
       lng: venue.geometry?.location?.lng?.() || venue.geometry?.location?.lng || 0
     };
 
-    // Create a safe venue object with fallback values
     const safeVenue = {
       name: venue.name || 'Unknown Venue',
       location: venue.vicinity || venue.formatted_address || 'Address not available',
@@ -85,19 +92,136 @@ const FindVenue = () => {
     });
   };
 
+  const getCurrentLocation = () => {
+    setIsLocating(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          try {
+            // Use Google's Geocoding API instead of GoMaps
+            const response = await fetch(
+              `https://maps.gomaps.pro/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${"AIzaSyE3D3KsBQ3rigY87df-KmliSzorSJ2YKyN"}`
+              
+                
+              
+  
+            );
+            const data = await response.json();
+            
+            if (data.status === "OK" && data.results[0]) {
+              // Filter for more accurate address components
+              const addressComponents = data.results[0].address_components;
+              const formattedAddress = data.results[0].formatted_address;
+              
+              // Log for debugging
+              console.log('Current coordinates:', { latitude, longitude });
+              console.log('Geocoding response:', data.results[0]);
+
+              setCurrentLocation({
+                coordinates: `${latitude},${longitude}`,
+                address: formattedAddress
+              });
+              setLocation1(`${latitude},${longitude}`);
+              setMapCenter({ lat: latitude, lng: longitude });
+            } else {
+              throw new Error('Failed to get address from coordinates');
+            }
+          } catch (error) {
+            console.error('Geocoding error:', error);
+            // Fallback to just coordinates
+            setLocation1(`${latitude},${longitude}`);
+            setCurrentLocation({
+              coordinates: `${latitude},${longitude}`,
+              address: `Lat: ${latitude}, Lng: ${longitude}`
+            });
+          }
+          setIsLocating(false);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          setError('Unable to fetch your location. Please enter manually.');
+          setIsLocating(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000, // Increased timeout
+          maximumAge: 0,
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser');
+      setIsLocating(false);
+    }
+  };
+
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
+
+  const mapContainerStyle = {
+    width: '100%',
+    height: '300px',
+    marginBottom: '20px'
+  };
+
   return (
     <div className="find-venue-container">
       <h1>Find Your Perfect Meeting Point</h1>
       
+      {/* <LoadScript googleMapsApiKey={"AlzaSye80jUDJ5M5gxMy9QecCvzBlrIvaXZmtNY"}>
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={mapCenter}
+          zoom={13}
+        >
+          {location1 && (
+            <Marker
+              position={{
+                lat: parseFloat(location1.split(',')[0]),
+                lng: parseFloat(location1.split(',')[1])
+              }}
+              icon={{
+                url: 'http://maps.gomaps.pro/mapfiles/ms/icons/blue-dot.png'
+              }}
+            />
+          )}
+          {location2 && (
+            <Marker
+              position={{
+                lat: parseFloat(location2.split(',')[0]),
+                lng: parseFloat(location2.split(',')[1])
+              }}
+              icon={{
+                url: 'http://maps.gomaps.pro/mapfiles/ms/icons/red-dot.png'
+              }}
+            />
+          )}
+        </GoogleMap>
+      </LoadScript> */}
+
       <div className="search-form">
         <div className="form-group">
           <label>Your Location (lat,lng)</label>
-          <input
-            type="text"
-            value={location1}
-            onChange={(e) => setLocation1(e.target.value)}
-            placeholder="e.g. 40.7128,-74.0060"
-          />
+          <div className="location-input-group">
+            <input
+              type="text"
+              value={location1}
+              onChange={(e) => setLocation1(e.target.value)}
+              placeholder="e.g. 40.7128,-74.0060"
+            />
+            <button 
+              onClick={getCurrentLocation}
+              disabled={isLocating}
+              className="locate-me-btn"
+            >
+              {isLocating ? 'Locating...' : '📍 My Location'}
+            </button>
+          </div>
+          {currentLocation?.address && (
+            <small className="address-text">{currentLocation.address}</small>
+          )}
         </div>
 
         <div className="form-group">
